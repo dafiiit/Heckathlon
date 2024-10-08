@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import os
 from urllib.parse import urljoin, urlparse
 
-
 def download_images(url):
     # Zerlege die URL und extrahiere das letzte Segment
     folder_name = os.path.basename(urlparse(url).path)
@@ -27,6 +26,11 @@ def download_images(url):
 
         # Mache die URL absolut
         img_url = urljoin(url, img_url)
+
+        # Überspringe SVG-Dateien
+        if img_url.endswith('.svg'):
+            print(f"SVG-Datei übersprungen: {img_url}")
+            continue
 
         # Lade das Bild herunter
         try:
