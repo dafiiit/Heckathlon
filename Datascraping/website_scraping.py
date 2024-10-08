@@ -1,25 +1,43 @@
-import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import os
 from urllib.parse import urljoin, urlparse
+import requests
 from ultralytics import YOLO
 from PIL import Image
 import io
 
-# User-Agent, um nicht blockiert zu werden
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-}
+# Lade den ChromeDriver (du musst den Pfad zu deinem WebDriver anpassen)
+chrome_options = Options()
+chrome_options.add_argument("--headless")  # Im Hintergrund ausführen
+service = Service("Pfad/zu/chromedriver")
+driver = webdriver.Chrome(service=service, options=chrome_options)
+
+# URL zur Geschirrspüler-Kategorie
+category_url = "https://www.bosch-home.com/de/de/category/geschirrspueler"
 
 def get_all_dishwasher_links(category_url):
     """Scrapt die Produktübersichtsseite und gibt Links zu allen Geschirrspülern zurück."""
-    response = requests.get(category_url, headers=headers)
-    
-    if response.status_code != 200:
-        print(f"Fehler beim Laden der Seite: {response.status_code}")
-        return []
+    driver.get(category_url)
 
-    soup = BeautifulSoup(response.text, 'html.parser')
+    # Warten, bis der "Mehr laden"-Button sichtbar und klickbar ist
+    while True:
+        try:
+            load_more_button = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.CLASS_NAME, "load-more-button"))
+            )
+            load_more_button.click()  # Klicke auf den Button
+        except:
+            print("Kein weiterer 'Mehr laden'-Button gefunden oder Fehler.")
+            break
+
+    # Den endgültigen Seiteninhalt nach dem vollständigen Laden analysieren
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
     
     # Sucht alle Links, die zu den Produkten führen (Anpassung an Bosch HTML-Struktur)
     product_links = []
@@ -75,17 +93,17 @@ def download_images(url, model):
         except Exception as e:
             print(f"Fehler beim Verarbeiten von {img_url}: {e}")
 
-# Load the YOLO model
+# Lade das YOLO-Modell
 model = YOLO("yolo11n.pt")
 
-# Bosch Geschirrspüler-Kategorie-Seite
-category_url = "https://www.bosch-home.com/de/de/category/geschirrspueler"
-
-# Alle Links zu den Geschirrspülern auf der Seite extrahieren
+# Hole alle Links zu den Geschirrspülern
 dishwasher_links = get_all_dishwasher_links(category_url)
 
 print(f"Insgesamt gefundene Links: {len(dishwasher_links)}")
 
-# Lade Bilder von allen gescrapten Links
+# Lade Bilder von allen gescrapten Links herunter
 for link in dishwasher_links:
     download_images(link, model)
+
+# Schließe den Browser
+driver.quit()
