@@ -2,52 +2,57 @@ import requests
 from bs4 import BeautifulSoup
 import os
 from urllib.parse import urljoin, urlparse
+from ultralytics import YOLO
+from PIL import Image
+import io
 
-def download_images(url):
-    # Zerlege die URL und extrahiere das letzte Segment
+def download_images(url, model):
     folder_name = os.path.basename(urlparse(url).path)
-
-    # Erstelle den kompletten Pfad für den Ordner (Datascraping/Data/ + letzter Bestandteil der URL)
     save_path = os.path.join("Datascraping", "Data", folder_name)
 
-    # Erstelle den Ordner, falls er nicht existiert
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
-    # Lade die Webseite herunter
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Finde alle Bilder auf der Hauptseite
     img_tags = soup.find_all("img")
 
     for img in img_tags:
         img_url = img.get("src")
-
-        # Mache die URL absolut
         img_url = urljoin(url, img_url)
 
-        # Überspringe SVG-Dateien
         if img_url.endswith('.svg'):
             print(f"SVG-Datei übersprungen: {img_url}")
             continue
 
-        # Lade das Bild herunter
         try:
             img_data = requests.get(img_url).content
-            img_name = os.path.join(save_path, os.path.basename(img_url))
-
-            # Speichere das Bild
-            with open(img_name, "wb") as img_file:
-                img_file.write(img_data)
-
-            print(f"Bild heruntergeladen: {img_name}")
+            img = Image.open(io.BytesIO(img_data))
+            
+            # Run YOLO inference on the image
+            results = model(img)
+            
+            # Check if "refrigerator" or "oven" is detected
+            detected_objects = [model.names[int(box.cls)] for box in results[0].boxes]
+            if "refrigerator" in detected_objects or "oven" in detected_objects:
+                img_name = os.path.join(save_path, os.path.basename(img_url))
+                
+                with open(img_name, "wb") as img_file:
+                    img_file.write(img_data)
+                
+                print(f"Bild erkannt und heruntergeladen: {img_name}")
+            else:
+                print(f"Kein Kühlschrank oder Ofen erkannt in: {img_url}")
 
         except Exception as e:
-            print(f"Fehler beim Herunterladen von {img_url}: {e}")
+            print(f"Fehler beim Verarbeiten von {img_url}: {e}")
 
+# Load the YOLO model
+model = YOLO("yolo11n.pt")
 
-# Beispielaufruf
+# Example usage
 download_images(
-    "https://www.bosch-home.com/de/de/product/geschirrspueler/geschirrspueler-freistehend/geschirrspueler-60-cm-freistehend/SMS6TCI00E"
+    "https://www.bosch-home.com/de/de/product/geschirrspueler/geschirrspueler-freistehend/geschirrspueler-60-cm-freistehend/SMS6TCI00E",
+    model
 )
