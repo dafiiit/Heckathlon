@@ -1,3 +1,4 @@
+# funktioniert so noch nicht
 import os
 import time
 import requests
