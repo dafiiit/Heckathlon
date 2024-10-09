@@ -17,13 +17,12 @@ model = YOLO("yolo11n.pt")
 
 # Temporäre Datei für das Bild
 temp_image_path = "/tmp/captured_image.jpg"
-n = 0
+last_duty_cycle = 2.5  # Initialisiere last_duty_cycle
+pwm.ChangeDutyCycle(last_duty_cycle)
+
 while True:
-
-    pwm.ChangeDutyCycle(2.5)
-
-    # Nimm ein Foto mit rpicam-still auf
-    os.system(f'rpicam-still -o {temp_image_path} -t 100')  
+    # Nimm ein Foto mit raspistill auf
+    os.system(f'raspistill -o {temp_image_path} -t 100')  
 
     # Lade das Bild
     frame = cv2.imread(temp_image_path)
@@ -39,26 +38,22 @@ while True:
     # Ergebnisse rendern
     annotated_frame = results[0].plot()
 
-    # Zeige die Ergebnisse anqqq
+    # Zeige die Ergebnisse an
     cv2.imshow('YOLOv11', annotated_frame)
-    if not results:
-        detected_person = False
-    else:
-        detected_person = any(
-            (result.boxes.cls.numel() > 0 and (result.boxes.cls == 0).any()) 
-            for result in results
-        )
-        
-    if detected_person:
-        target_duty_cycle = 5
-    else:
-        target_duty_cycle = 2.5
+    
+    detected_person = any(
+        (result.boxes.cls.numel() > 0 and (result.boxes.cls == 0).any()) 
+        for result in results
+    )
+    
+    # Setze den Ziel-PWM-Zyklus basierend auf der Personenerkennung
+    target_duty_cycle = 5 if detected_person else 2.5
 
-    if abs(last_duty_cycle - target_duty_cycle) > 0.1:  # Nur ändern, wenn der Unterschied signifikant ist
+    # Aktualisiere den PWM-Wert, falls sich der Duty-Cycle signifikant geändert hat
+    if abs(last_duty_cycle - target_duty_cycle) > 0.1:
         pwm.ChangeDutyCycle(target_duty_cycle)
         last_duty_cycle = target_duty_cycle
         time.sleep(0.1)  # Warte 100 ms
-
 
     # Beende die Schleife, wenn die Taste 'q' gedrückt wird
     if cv2.waitKey(1) == ord('q'):
@@ -66,3 +61,7 @@ while True:
 
 # Fenster schließen
 cv2.destroyAllWindows()
+
+# PWM stoppen und GPIO aufräumen
+pwm.stop()
+GPIO.cleanup()
