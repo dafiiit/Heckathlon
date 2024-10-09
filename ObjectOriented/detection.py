@@ -73,9 +73,10 @@ class ObjectDetector:
         print("Daten aufgeteilt in Trainings- und Validierungssets.")
 
     def retrain(self):
-        results = model.train(data="custom_coco.yaml", epochs=100, imgsz=640)
+        results = self.model.train(data="custom_coco.yaml", epochs=100, imgsz=640)
 
     def preview(self):
+        results = self.detect()
         # Ergebnisse rendern
         annotated_frame = results[0].plot()
 

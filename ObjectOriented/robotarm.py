@@ -17,32 +17,32 @@ class Robotarm:
             return 42
 
     def pick_up_first_block(self):
-        robotarm.moveTo(150, 0, 150)
-        robotarm.moveToX(160)
-        robotarm.moveToY(-60)
-        robotarm.moveTo(160, -60, 60)
-        robotarm.activateSuction()
-        robotarm.moveToZ(150)
-        robotarm.moveTo(110, 150, 150)
-        robotarm.moveTo(110, 150, 80)
-        robotarm.disableSuction()
-        robotarm.moveToZ(150)
-        robotarm.moveTo(150, 0, 150)
+        self.moveTo(150, 0, 150)
+        self.moveToX(160)
+        self.moveToY(-60)
+        self.moveTo(160, -60, 60)
+        self.activateSuction()
+        self.moveToZ(150)
+        self.moveTo(110, 150, 150)
+        self.moveTo(110, 150, 80)
+        self.disableSuction()
+        self.moveToZ(150)
+        self.moveTo(150, 0, 150)
 
         time.sleep(5)
-        robotarm.close()
+        self.close()
         
     def pick_up_second_block(self):
         print("still to do")
         
         time.sleep(5)
-        robotarm.close()
+        self.close()
 
     def pick_up_third_block(self):
         print("still to do")
         
         time.sleep(5)
-        robotarm.close()
+        self.close()
     
     def moveTo(self, x: int, y: int, z: int):
         message = f"G0 X{x} Y{y} Z{z} F1000000\n"

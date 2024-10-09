@@ -1,8 +1,8 @@
 #importieren der Klassen
-from detection.py import ObjectDetector
-from robotarm.py import Robotarm
-from conveyorbelt.py import ConveyorBeltControl
-from schranke.py import Schranke
+from detection import ObjectDetector
+from robotarm import Robotarm
+from conveyorbelt import ConveyorBeltControl
+from schranke import Schranke
 
 #erstellen der Objekte
 robotarm = Robotarm()
@@ -12,13 +12,13 @@ schranke = Schranke()
 
 state = 1
 blockcounter = 1 #gibt an wie viele Blöcke schon aufgehoben wurden
-while true:
+while True:
     if state == 1:
         print("Roboter hebt nten Block auf")
         if robotarm.pick_up_block_n(blockcounter) == 42:
             print("picked up all blocks")
             break
-        wait(1000)
+        time.sleep(1000)
         blockcounter = blockcounter+1
         state = 2 
     elif state == 2:
@@ -55,7 +55,7 @@ while true:
         conveyor_control.control_belt(3, "vor")
         conveyor_control.control_stopper(2, "runter")
         conveyor_control.control_belt(2, "vor")
-        wait(10000)
+        time.sleep(10000)
         state = 6
     elif state == 6:
         print("öffne die Schranke")
