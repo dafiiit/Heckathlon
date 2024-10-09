@@ -44,16 +44,14 @@ try:
 
         if detected_person:
             print("Person detected, rotating the motor to 45 degrees.")
-            pwm.ChangeDutyCycle(duty_cycle_45)  # Rotate the servo to 45 degrees
-            time.sleep(1)  # Allow the servo to move
+            pwm.ChangeDutyCycle(5)  # Rotate the servo to 45 degrees
+            time.sleep(2)  # Allow the servo to move
         else:
             print("No person detected, motor remains idle.")
-            pwm.ChangeDutyCycle(0)  # Turn off the PWM to stop any movement
-
+            pwm.ChangeDutyCycle(2.5)  # Turn off the PWM to stop any movement
+            time.sleep(2)
         # Annotate the frame with detection results and display it
         annotated_frame = results[0].plot()
-        cv2.imshow('YOLOv11', annotated_frame)
-        cv2.waitKey(0)  # Wait for a key press before closing the window
 
 except KeyboardInterrupt:
     print("Interrupted by the user.")
