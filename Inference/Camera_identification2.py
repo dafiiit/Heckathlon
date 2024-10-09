@@ -9,14 +9,14 @@ model = YOLO("yolo11n.pt")
 
 # Set up the GPIO pin for the servo motor
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT)  # GPIO 18 (Pin 12) is used for PWM
+GPIO.setup(14, GPIO.OUT)  # GPIO 18 (Pin 12) is used for PWM
 
 # Set PWM signal at 50Hz (common frequency for servos)
-pwm = GPIO.PWM(18, 50)  # GPIO pin 18 with 50Hz
+pwm = GPIO.PWM(14, 50)  # GPIO pin 18 with 50Hz
 pwm.start(0)  # Start PWM with 0% duty cycle (off)
 
 # Define duty cycle for 45 degrees (adjust based on your servo motor)
-duty_cycle_45 = 5.0  # 45 degrees, adjust this value if necessary
+duty_cycle_45 = 5 # 45 degrees, adjust this value if necessary
 
 # Temporary file for the image
 temp_image_path = "/tmp/captured_image.jpg"
