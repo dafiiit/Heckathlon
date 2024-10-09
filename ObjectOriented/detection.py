@@ -27,24 +27,21 @@ class ObjectDetector:
         return self.temp_image_path
 
     def detect(self):
-        # Bild aufnehmen
-        self.capture_image()
-
-        # Lade das Bild
-        frame = cv2.imread(self.temp_image_path)
-        if frame is None:
-            print("Fehler beim Lesen des Frames.")
-            return False, False
-
-        # Führe die Objekterkennung durch
-        results = self.model(frame)
-        
-        # Schließe das Fenster
-        cv2.destroyAllWindows()
-        return results
+        try:
+            self.capture_image()
+            frame = cv2.imread(self.temp_image_path)
+            if frame is None:
+                raise ValueError("Error reading the captured image.")
+            results = self.model(frame)
+            return results
+        except Exception as e:
+            print(f"Error during detection: {str(e)}")
+            return None
     
     def detect_oven_refrigerator(self):
         results = self.detect()
+        if results is None:
+            return False, False
         # Überprüfen, ob Kühlschrank oder Ofen erkannt wurde
         detected_classes = [result.cls for result in results[0].boxes]
         refrigerator_detected = 'refrigerator' in detected_classes
@@ -82,6 +79,8 @@ class ObjectDetector:
 
         # Zeige die Ergebnisse an
         cv2.imshow('YOLOv11', annotated_frame)
+        # Schließe das Fenster
+        cv2.destroyAllWindows()
         
 # Wird ausgeführt wenn dieses Programm direkt ausgeführt wird
 if __name__ == "__main__":

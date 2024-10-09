@@ -1,4 +1,3 @@
-
 # constants
 # OPC-UA Server addresses of CPS Gates
 cps01 = "opc.tcp://192.168.14.118:4840"

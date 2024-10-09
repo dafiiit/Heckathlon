@@ -29,14 +29,18 @@ class ConveyorBeltControl:
         
         gate = self.cps_gates[belt_number]
         
-        if direction == "vor":
-            gate.run_conveyorbelt_right()
-        elif direction == "rück":
-            gate.run_conveyorbelt_left()
-        elif direction == "stopp":
-            gate.stop_conveyorbelt()
-        else:
-            raise ValueError(f"Invalid direction: {direction}. Must be 'vor', 'rück', or 'stopp'.")
+        try:
+            if direction == "vor":
+                gate.run_conveyorbelt_right()
+            elif direction == "rück":
+                gate.run_conveyorbelt_left()
+            elif direction == "stopp":
+                gate.stop_conveyorbelt()
+            else:
+                raise ValueError(f"Invalid direction: {direction}. Must be 'vor', 'rück', or 'stopp'.")
+        except Exception as e:
+            print(f"Error controlling belt {belt_number}: {str(e)}")
+            # Implement appropriate error handling or logging here
 
     def control_stopper(self, belt_number, position):
         if belt_number not in self.cps_gates:
