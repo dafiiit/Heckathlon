@@ -1,6 +1,7 @@
 import cv2
 import torch
 import time
+from ultralytics import YOLO
 
 # Lade das YOLOv11 Modell
 model = YOLO("yolo11n.pt")
