@@ -1,28 +1,36 @@
 import cv2
-import torch
+import os
 import time
 from ultralytics import YOLO
 
 # Lade das YOLOv11 Modell
 model = YOLO("yolo11n.pt")
 
-# Initialisiere die Kamera
-cap = cv2.VideoCapture(0)
+# Temporäre Datei für das Bild
+temp_image_path = "/tmp/captured_image.jpg"
 
 while True:
-    # Lese ein Frame von der Kamera
-    ret, frame = cap.read()
+    # Nimm ein Foto mit rpicam-still auf
+    os.system(f'rpicam-still -o {temp_image_path} -t 1')  # 1 Sekunde für die Kameraumstellung
+
+    # Lade das Bild
+    frame = cv2.imread(temp_image_path)
+    if frame is None:
+        print("Fehler beim Lesen des Frames.")
+        break
 
     # Führe die Objekterkennung durch
     results = model(frame)
 
+    # Ergebnisse rendern
+    annotated_frame = results[0].plot()
+
     # Zeige die Ergebnisse an
-    cv2.imshow('YOLOv11', results.render()[0])
+    cv2.imshow('YOLOv11', annotated_frame)
 
     # Beende die Schleife, wenn die Taste 'q' gedrückt wird
     if cv2.waitKey(1) == ord('q'):
         break
 
-# Release the capture
-cap.release()
+# Fenster schließen
 cv2.destroyAllWindows()
