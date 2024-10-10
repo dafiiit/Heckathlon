@@ -22,26 +22,36 @@ try:
         if state == 1:
             logging.info("Roboter hebt nten Block auf")
             try:
+                conveyor_control.control_stopper(5, "hoch")
+                while(not conveyor_control.get_conveyor_detection(5)):
+                    conveyor_control.control_belt(5, "vor")
+                    conveyor_control.control_belt(6, "vor")
+                conveyor_control.control_belt(5, "stopp")
+                conveyor_control.control_belt(6, "stopp")
                 if robotarm.pick_up_block_n(blockcounter) == 42:
                     logging.info("picked up all blocks")
                     break
             except Exception as e:
                 logging.error(f"Error picking up block: {str(e)}")
                 # Implement appropriate error handling here
-            time.sleep(1)
             blockcounter += 1
             state = 2
         elif state == 2:
             print("Fließbänder befödern den Block zur Kamera ")
-            conveyor_control.control_belt(6, "vor")
-            conveyor_control.control_stopper(6, "runter")
             conveyor_control.control_belt(5, "vor")
             conveyor_control.control_stopper(5, "runter")
+            time.sleep(0.5)
+            while(not conveyor_control.get_conveyor_detection(5) or blockcounter is 3):
+                continue
+            conveyor_control.control_stopper(5, "hoch")
             conveyor_control.control_belt(4, "vor")
             conveyor_control.control_stopper(4, "hoch")
-            detection = conveyor_control.get_conveyor_detection(4)
-            if detection:
-                state = 3
+            
+            while (not conveyor_control.get_conveyor_detection(4)):
+                continue
+            conveyor_control.control_belt(4, "stopp")
+            conveyor_control.control_belt(5, "stopp")
+            state = 3
         elif state == 3:
             print("erkenne refrigerator/oven")
             refrigerator_detected, oven_detected = (
@@ -58,8 +68,8 @@ try:
                 state = 3
         elif state == 4:
             print("schließe die Schranke")
-            if schranke.schließe_schranke():
-                state = 5
+            schranke.schließe_schranke()
+            state = 5
         elif state == 5:
             print("betreibe die Fließbänder nach der Kamera")
             conveyor_control.control_stopper(4, "runter")
@@ -68,7 +78,10 @@ try:
             conveyor_control.control_belt(3, "vor")
             conveyor_control.control_stopper(2, "runter")
             conveyor_control.control_belt(2, "vor")
-            time.sleep(10000)
+            time.sleep(10)
+            conveyor_control.control_belt(4, "stopp")
+            conveyor_control.control_belt(3, "stopp")
+            conveyor_control.control_belt(2, "stopp")
             state = 6
         elif state == 6:
             print("öffne die Schranke")
