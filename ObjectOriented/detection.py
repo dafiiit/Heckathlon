@@ -1,12 +1,13 @@
 import cv2
 import os
 import random
+import time
 from ultralytics import YOLO
 
 class ObjectDetector:
-    def __init__(self, model_path):
+    def __init__(self):
         # Lade das YOLO-Modell
-        self.model = YOLO(model_path)
+        self.model = YOLO("yolo11n.pt")
         self.temp_image_path = "/tmp/captured_image.jpg"
         self.fridge_folder = "refrigerator_data"
         self.oven_folder = "oven_data"
@@ -79,12 +80,17 @@ class ObjectDetector:
 
         # Zeige die Ergebnisse an
         cv2.imshow('YOLOv11', annotated_frame)
+        if cv2.waitKey(1) == ord('q'):
+            print("Cant stop yet :(")
+        time.sleep(10000)
         # Schließe das Fenster
-        #cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
         
 # Wird ausgeführt wenn dieses Programm direkt ausgeführt wird
 if __name__ == "__main__":
     # Objekt der Klasse erstellen und die detect Methode ausführen
-    detector = ObjectDetector("yolo11n.pt")
-    refrigerator, oven = detector.detect_oven_refrigerator()
-    print(f"Kühlschrank erkannt: {refrigerator}, Ofen erkannt: {oven}")
+    detector = ObjectDetector()
+    detector.preview()
+
+    #refrigerator, oven = detector.detect_oven_refrigerator()
+    #print(f"Kühlschrank erkannt: {refrigerator}, Ofen erkannt: {oven}")
