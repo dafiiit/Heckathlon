@@ -21,12 +21,12 @@ class Schranke:
     
     def schließe_schranke(self):
         self.set_angle(45)
-        time.sleep(2000)
+        time.sleep(2)
         return True
     
     def öffne_schranke(self):
         self.set_angle(0)
-        time.sleep(2000)
+        time.sleep(2)
         return True
     
     def cleanup(self):
@@ -36,5 +36,5 @@ class Schranke:
 if __name__ == "__main__":
     schranke = Schranke()
     schranke.schließe_schranke()
-    time.sleep(5000)
+    time.sleep(5)
     schranke.öffne_schranke()
