@@ -19,13 +19,13 @@ class Schranke:
         GPIO.output(self.servo_pin, False)
         self.servo.ChangeDutyCycle(0)
     
-    def schließe_schranke(self):
-        self.set_angle(45)
+    def close(self):
+        self.servo.ChangeDutyCycle(5)
         time.sleep(2)
         return True
     
-    def öffne_schranke(self):
-        self.set_angle(0)
+    def open(self):
+        self.servo.ChangeDutyCycle(2.5)
         time.sleep(2)
         return True
     

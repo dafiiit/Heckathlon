@@ -54,16 +54,19 @@ class Robotarm:
         message = f"G0 X{x} F1000000\n"
         time.sleep(0.5)
         self.ser.write(message.encode('utf-8'))
+        time.sleep(0.5)
 
     def moveToY(self, y: int):
         message = f"G0 Y{y} F1000000\n"
         time.sleep(0.5)
         self.ser.write(message.encode('utf-8'))
+        time.sleep(0.5)
 
     def moveToZ(self, z: int):
         message = f"G0 Z{z} F1000000\n"
         time.sleep(0.5)
         self.ser.write(message.encode('utf-8'))
+        time.sleep(0.5)
 
     def activateSuction(self):
         message = "M2231 V1\n"
