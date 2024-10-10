@@ -60,6 +60,43 @@ class ConveyorBeltControl:
             raise ValueError(f"Invalid belt number: {belt_number}. Must be between 1 and 6.")
         
         return self.cps_gates[belt_number].conveyor_detection_state()
+    
+    def move(self, *belt_numbers):
+        for belt_number in belt_numbers:
+            self.control_belt(belt_number, "vor")
+    
+    def stop(self, *belt_numbers):
+        for belt_number in belt_numbers:
+            self.control_belt(belt_number, "stopp")
+    
+    def stop_all(self):
+        for belt_number in self.cps_gates:
+            self.control_belt(belt_number, "stopp")
+    
+    def move_all(self):
+        for belt_number in self.cps_gates:
+            self.control_belt(belt_number, "vor")
+
+    def block(self, *belt_numbers):
+        for belt_number in belt_numbers:
+            self.control_stopper(belt_number, "hoch")
+    
+    def unblock(self, *belt_numbers):
+        for belt_number in belt_numbers:
+            self.control_stopper(belt_number, "runter")
+    
+    def detect_block(self, belt_number):
+        return self.get_conveyor_detection(belt_number)
+    
+    def block_when_detected(self, belt_number):
+        while not self.detect_block(belt_number):
+            continue
+        self.control_stopper(belt_number, "hoch")
+    
+    def wait_until_detected(self, belt_number):
+        while not self.detect_block(belt_number):
+            continue
+        
 
 # Example usage:
 if __name__ == "__main__":
