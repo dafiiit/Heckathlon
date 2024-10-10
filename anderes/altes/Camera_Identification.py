@@ -11,13 +11,15 @@ temp_image_path = "/tmp/captured_image.jpg"
 
 while True:
     # Nimm ein Foto mit rpicam-still auf
-    os.system(f'rpicam-still -o {temp_image_path} -t 1')  # 1 Sekunde für die Kameraumstellung
+    os.system(f'rpicam-still -o {temp_image_path} -t 100')  # 1 Sekunde für die Kameraumstellung
 
     # Lade das Bild
     frame = cv2.imread(temp_image_path)
     if frame is None:
         print("Fehler beim Lesen des Frames.")
         break
+
+    frame = cv2.rotate(frame, cv2.ROTATE_180)
 
     # Führe die Objekterkennung durch
     results = model(frame)
