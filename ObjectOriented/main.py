@@ -6,6 +6,7 @@ from detection import ObjectDetector
 from robotarm import Robotarm
 from conveyorbelt import ConveyorBeltControl
 from schranke import Schranke
+from api_usage import API
 
 # erstellen der Objekte
 robotarm = Robotarm()
@@ -47,6 +48,7 @@ try:
                 object_detector.detect_oven_refrigerator()
             )
             print("lade die erkannten daten per API hoch")
+            API.send_detection(refrigerator_detected, oven_detected)
             if oven_detected:
                 state = 4
             elif refrigerator_detected:
