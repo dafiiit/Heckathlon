@@ -80,7 +80,7 @@ class ObjectDetector:
         # Zeige die Ergebnisse an
         cv2.imshow('YOLOv11', annotated_frame)
         # Schließe das Fenster
-        cv2.destroyAllWindows()
+        #cv2.destroyAllWindows()
         
 # Wird ausgeführt wenn dieses Programm direkt ausgeführt wird
 if __name__ == "__main__":
