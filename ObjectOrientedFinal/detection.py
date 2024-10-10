@@ -94,7 +94,7 @@ if __name__ == "__main__":
     oven, refrigerator = detector.detect_oven_refrigerator()
     print("Oven: ")
     print(oven)
-    #detector.preview()
+    detector.preview()
 
     #refrigerator, oven = detector.detect_oven_refrigerator()
     #print(f"Kühlschrank erkannt: {refrigerator}, Ofen erkannt: {oven}")

@@ -41,11 +41,8 @@ def disableSuction():
     print(f"Sent: {message}")
 
 # Replace 'COM3' with your port (e.g., '/dev/ttyUSB0' for Linux)
-ser = serial.Serial(
-    '/dev/cu.usbmodem21401',
-    baudrate=115200,
-    timeout=1
-)
+ser = serial.Serial('/dev/ttyACM0', baudrate, timeout=timeout)
+
 
 time.sleep(2)  # Give time for the connection to establish
 
