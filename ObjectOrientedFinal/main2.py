@@ -1,5 +1,6 @@
 import time
 import logging
+import requests
 
 from detection import ObjectDetector
 from robotarm import Robotarm
@@ -11,6 +12,8 @@ robotarm = Robotarm()
 object_detector = ObjectDetector()
 cc = cc()
 schranke = Schranke(18)
+
+url = 'http://localhost:3000/api/identifications'
 
 #first block
 now = True
@@ -32,6 +35,14 @@ try:
 
         #detect object
         if now :
+            headers = {'Content-Type': 'application/json'}
+            data = {
+                "SerialNumber": "SN12343",
+                "ApplianceType": "Coffee Machine",
+                "Timestamp": 1728495446
+            }
+
+            response = requests.post(url, headers=headers, json=data)
             schranke.close()
         else:
             schranke.open()
