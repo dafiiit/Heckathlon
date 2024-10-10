@@ -64,6 +64,7 @@ class ConveyorBeltControl:
 # Example usage:
 if __name__ == "__main__":
     conveyor_control = ConveyorBeltControl()
-    conveyor_control.control_belt(1, "vor")
-    conveyor_control.control_stopper(2, "hoch")
-    detection = conveyor_control.get_conveyor_detection(3)
+    conveyor_control.control_belt(4, "vor")
+    conveyor_control.control_stopper(4, "runter")
+    if conveyor_control.get_conveyor_detection(3):
+        conveyor_control.control_stopper(4, "hoch")
