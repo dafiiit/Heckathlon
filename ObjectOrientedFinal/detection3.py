@@ -36,20 +36,23 @@ class ObjectDetector:
     def detect_oven_refrigerator(self):
         # Verwende die detect-Methode, um Objekte zu erkennen
         results = self.detect()
-        
+
         # Initialisiere Variablen für die Ausgabe
         oven_detected = False
         refrigerator_detected = False
 
         # Gehe durch die Ergebnisse und suche nach Ofen und Kühlschrank
         for result in results:
-            for obj in result.boxes.data:
-                class_id = int(obj.cls)  # Klassifizierungs-ID des erkannten Objekts
-                if class_id == 0:  # Hier muss die ID für Kühlschrank stehen
+            # Access the predicted boxes and corresponding classes
+            for box in result.boxes:  # Each `box` is an object prediction
+                class_id = int(box.cls[0])  # Access the class ID
+                
+                # Check for refrigerator or oven class based on your trained model IDs
+                if class_id == 0:  # Assuming class ID 0 is for 'refrigerator'
                     refrigerator_detected = True
-                elif class_id == 1:  # Hier muss die ID für Ofen stehen
+                elif class_id == 1:  # Assuming class ID 1 is for 'oven'
                     oven_detected = True
-        
+
         return oven_detected, refrigerator_detected
 
     def preview(self):
