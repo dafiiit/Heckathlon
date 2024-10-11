@@ -10,6 +10,21 @@ from api_usage import API
 import requests
 url = 'http://localhost:3000/api/identifications'
 
+mock_identifications = {
+    1: {
+        "SerialNumber": "SN12343",
+        "ApplianceType": "Oven",
+    }, 
+    2: {
+        "SerialNumber": "SN15543",
+        "ApplianceType": "Refrigerator",
+    },
+    3: {
+        "SerialNumber": "SN99543",
+        "ApplianceType": "Refrigerator",
+    }
+}
+
 
 # erstellen der Objekte
 robotarm = Robotarm()
@@ -63,11 +78,9 @@ try:
         elif state == 3:
             print("erkenne refrigerator/oven")
             headers = {'Content-Type': 'application/json'}
-            data = {
-                "SerialNumber": "SN12343",
-                "ApplianceType": "Coffee Machine",
-                "Timestamp": 1728495446
-            }
+            data = mock_identifications[blockcounter]
+            data["Timestamp"] = int(time.time())
+            print(f"Mock identification {data}")
 
             response = requests.post(url, headers=headers, json=data)
             # refrigerator_detected, oven_detected = (
